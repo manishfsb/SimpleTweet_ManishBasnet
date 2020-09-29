@@ -1,13 +1,17 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -21,8 +25,9 @@ import okhttp3.Headers;
 public class ComposeActivity extends AppCompatActivity {
 
     public static final String TAG = "ComposeActivity";
-    public static final int MAX_TWEET_LENGTH = 140;
+    public static final int MAX_TWEET_LENGTH = 280;
 
+    TextView tvCharCount;
     EditText etCompose;
     Button btnTweet;
     TwitterClient client;
@@ -32,10 +37,33 @@ public class ComposeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose);
 
+
         client = TwitterApp.getRestClient(this);
 
+        tvCharCount = findViewById(R.id.tvCharCount);
         etCompose = findViewById(R.id.etCompose);
         btnTweet = findViewById(R.id.btnTweet);
+
+        etCompose.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int character = etCompose.length();
+                character = MAX_TWEET_LENGTH - character;
+                String convert = String.valueOf(character);
+                tvCharCount.setText("Remaining characters: " + convert);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Fires right before text is changing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Fires right after the text has changed
+
+            }
+        });
 
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
